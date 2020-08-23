@@ -1,4 +1,4 @@
-# Clon de Twitter usando NextJS por @midudev
+# Clon de Football Manager usando Next JS
 
 ## Empezar a desarrollar
 
@@ -12,4 +12,4 @@ yarn dev
 
 Abre [http://localhost:3000](http://localhost:3000) y en tu navegador verás el resultado.
 
-**[👨‍🏫 Todas las clases disponibles en la rama principal.](https://github.com/midudev/curso-nextjs-twitter-clone/blob/master/README.md)**
+**[👨‍🏫 Sitio inspirado por la pagina de stats de Allavaz.](https://github.com/Allavaz/iossa-stats/blob/master/README.md)**
