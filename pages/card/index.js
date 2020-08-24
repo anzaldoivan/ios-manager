@@ -2514,13 +2514,13 @@ function Card() {
                   <div className="cards-container flex flex-expand">
                     <div className="player-main-column">
                       <h3>Estilo de Juego</h3>
-                      <ul class="player-index-list">
+                      <ul className="player-index-list">
                         <li></li>
                       </ul>
                     </div>
                     <div className="player-main-column">
                       <h3>Habilidades de Jugador</h3>
-                      <ul class="player-index-list">
+                      <ul className="player-index-list">
                         <li></li>
                       </ul>
                     </div>
