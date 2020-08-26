@@ -119,17 +119,6 @@ export default css`
       1px 1px 0 #000;
   }
 
-  .nav3 {
-    padding-top: 20%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-left: auto;
-    margin-right: auto;
-    width: 80%;
-  }
-
   .icons {
     display: inline-block;
     width: 120px;
@@ -374,6 +363,16 @@ export default css`
 
   .stats-col-1 {
     left: 10px;
+  }
+
+  .section1 {
+    display: flex;
+    flex: 1;
+  }
+
+  .section1 {
+    display: flex;
+    flex: 2;
   }
 
   .top-info {

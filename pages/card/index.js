@@ -5,8 +5,9 @@ import {
   steamid_to_64bit,
   getSeason,
   getTeam,
+  getBanner,
+  getSkill,
 } from "components/Util/Util"
-import { getBanner } from "components/Util/Util"
 // import html2canvas from "html2canvas"
 // import { saveAs } from "file-saver"
 
@@ -18,7 +19,7 @@ import styles, { globalStyles } from "./styles"
 // importamos AXIOS que nos sirve hacer los fetch con las API
 
 function Card() {
-  //Creamos los hooks que usaremos a lo largo de todo el programa para identificar las estadisticas
+  // Creamos los hooks que usaremos a lo largo de todo el programa para identificar las estadisticas
   const [name, setName] = useState(0)
   const [team, setTeam] = useState(0)
   const [steamID, setSteamID] = useState(0)
@@ -86,6 +87,7 @@ function Card() {
   const [t6team, setT6team] = useState(0)
   const [banner, setBanner] = useState(0)
   const [fullteam, setFullteam] = useState(0)
+  const [skill, setSkill] = useState(0)
 
   const [playerID, setPlayerID] = useState("STEAM_0:1:36779496")
   const [tID, setTID] = useState("all")
@@ -104,7 +106,7 @@ function Card() {
   const CP = (savesavg + savespercentavg + concededavg) / 3
   const CC = Math.round((passavg + assistavg + posavg) / 3)
   const AF = (finavg + preavg + attackassistavg) / 3
-  const AD = (interavg + defensepassavg) / 2
+  const AD = (interavg + defensepassavg + sacrificio) / 3
 
   const val_def = (AD * 2.3 + AF / 2.5 + CC / 2) / 3
   const val_del = (AF * 2.3 + AD / 2.5 + CC / 2) / 3
@@ -113,9 +115,7 @@ function Card() {
   const val_gk = CP
 
   // pendiende analizar si ovrT sigue teniendo un valor util, en todo caso borrarlo
-  const ovrT = Math.trunc((t1 + t2 + t3 + t4) / 4)
   let ovr
-  let ovrt1
   let pos
   // if para determinar el total predominante entre las posiciones
   if (val_def >= val_del) {
@@ -150,45 +150,6 @@ function Card() {
   if (ovr < CP) {
     ovr = Math.trunc(CP)
   }
-
-  const contador =
-    0 +
-    (t1real ? 1 : 0) +
-    (t0real ? 1 : 0) +
-    (t2real ? 1 : 0) +
-    (t3real ? 1 : 0) +
-    (t4real ? 1 : 0) +
-    (t5real ? 1 : 0) +
-    (maradeireal ? 1 : 0) +
-    (masterreal ? 1 : 0)
-  const over = Math.round(
-    0 +
-      (t0real ? t0 : 0) +
-      (t1real ? t1 : 0) +
-      (t2real ? t2 : 0) +
-      (t3real ? t3 : 0) +
-      (t4real ? t4 : 0) +
-      (t5real ? t5 : 0) +
-      (masterreal ? master : 0) +
-      (maradeireal ? maradei : 0)
-  )
-  const ovrtotal =
-    tID == "all" ? (over == 0 ? ovr : Math.round(over / contador)) : ovr
-  const CPtotal =
-    tID == "all"
-      ? Math.round(
-          (0 +
-            (t0real ? t1 : 0) +
-            (t1real ? t1 : 0) +
-            (t2real ? t2 : 0) +
-            (t3real ? t3 : 0) +
-            (t4real ? t4 : 0) +
-            (t5real ? t5 : 0) +
-            (masterreal ? master : 0) +
-            (maradeireal ? maradei : 0)) /
-            contador
-        )
-      : ovr
 
   // if para determinar la posicion mas valorada
   if (val_def >= val_del) {
@@ -386,7 +347,7 @@ function Card() {
         ? totaltimeamerica
         : totaltimet0
 
-    //call setName below to change the state 'name'
+    // call setName below to change the state 'name'
     // fetch inicial, por default agarra la playerID mia y la temporada es la de "all"
     setName(user[0].name)
     setTeam(getTeam(user[0].team))
@@ -470,6 +431,14 @@ function Card() {
     setSavespercentavg(Math.round(doSomethingWithInput(SAVEPERCENT)))
     setConcededavg(Math.round(doSomethingWithInput(CONCEDED)))
     setSacrificio(Math.round(doSomethingWithInput(SACRIFICIO)))
+
+    var theskill = players.players.map((player) => {
+      if (player.skill1 && player.steam === playerID) {
+        return player.skill1
+      }
+    })
+    var theskill2 = theskill.toString().split(",").join("")
+    console.log("La skill es: " + theskill2)
   }
 
   const fetcht1 = async () => {
@@ -516,6 +485,11 @@ function Card() {
         CONCEDE = 1
       }
       let CONCEDED = Math.abs((1 - CONCEDE / SAVES) * 130)
+      let SACRIFICIO = Math.abs(
+        (usert1[0].distancecovered *
+          (100 - usert1[0].possession / (totaltime / usert1[0].matches))) /
+          7000
+      )
 
       PASS = Math.round(doSomethingWithInput(PASS))
       DEFPASS = Math.round(doSomethingWithInput(PASS))
@@ -528,9 +502,10 @@ function Card() {
       SAVE = Math.round(doSomethingWithInput(SAVE))
       SAVEPERCENT = Math.round(doSomethingWithInput(SAVEPERCENT))
       CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      SACRIFICIO = Math.round(doSomethingWithInput(SACRIFICIO))
 
       const AFT1 = (FIN + PRE + ATTACKASISS) / 3
-      const ADT1 = (INTER + DEFPASS) / 2
+      const ADT1 = (INTER + DEFPASS + SACRIFICIO) / 3
       //const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
       const CCT1 = (PASS + ASISS + POSS) / 3
       const CPT1 = (SAVE + SAVEPERCENT + CONCEDED) / 3
@@ -624,21 +599,27 @@ function Card() {
         CONCEDE = 1
       }
       let CONCEDED = Math.abs((1 - CONCEDE / SAVES) * 130)
+      let SACRIFICIO = Math.abs(
+        (usert1[0].distancecovered *
+          (100 - usert1[0].possession / (totaltime / usert1[0].matches))) /
+          7000
+      )
 
-      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
       PASS = Math.round(doSomethingWithInput(PASS))
       DEFPASS = Math.round(doSomethingWithInput(PASS))
       ASISS = Math.round(doSomethingWithInput(ASISS))
       INTER = Math.round(doSomethingWithInput(INTER))
-      POSS = Math.round(doSomethingWithInput(POSS * 0.97))
+      POSS = Math.round(doSomethingWithInput(POSS))
       ATTACKASISS = Math.round(doSomethingWithInput(ASISS))
       FIN = Math.round(doSomethingWithInput(FIN))
       PRE = Math.round(doSomethingWithInput(PRE))
       SAVE = Math.round(doSomethingWithInput(SAVE))
       SAVEPERCENT = Math.round(doSomethingWithInput(SAVEPERCENT))
+      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      SACRIFICIO = Math.round(doSomethingWithInput(SACRIFICIO))
 
       const AFT1 = (FIN + PRE + ATTACKASISS) / 3
-      const ADT1 = (INTER + DEFPASS) / 2
+      const ADT1 = (INTER + DEFPASS + SACRIFICIO) / 3
       //const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
       const CCT1 = (PASS + ASISS + POSS) / 3
       const CPT1 = (SAVE + SAVEPERCENT + CONCEDED) / 3
@@ -709,7 +690,7 @@ function Card() {
         (usert1[0].tacklescompleted / usert1[0].tackles) * 100 * 4.5
       )
       let MATCHESRATIO = totaltime / usert1[0].matches
-      let POSS = Math.round((usert1[0].possession / MATCHESRATIO) * 7.76)
+      let POSS = Math.round((usert1[0].possession / MATCHESRATIO) * 8)
       let INTER = Math.round(
         ((usert1[0].interceptions / totaltime) * 2.5 +
           usert1[0].tacklescompleted / totaltime) *
@@ -718,7 +699,7 @@ function Card() {
       let ATTACKASISS = Math.round(doSomethingWithInput(ASISS))
       let FIN = Math.round((usert1[0].goals / totaltime) * 70)
       let PRE = Math.round((usert1[0].shotsontarget / usert1[0].shots) * 100)
-      const ATASISS = Math.round(doSomethingWithInput(ASISS))
+      let ATASISS = Math.round(doSomethingWithInput(ASISS))
       let SAVE = Math.round((usert1[0].saves / totaltime) * 11)
       let SAVEPERCENT = Math.round(
         (usert1[0].savescaught / usert1[0].saves) * 110
@@ -732,6 +713,11 @@ function Card() {
         CONCEDE = 1
       }
       let CONCEDED = Math.abs((1 - CONCEDE / SAVES) * 130)
+      let SACRIFICIO = Math.abs(
+        (usert1[0].distancecovered *
+          (100 - usert1[0].possession / (totaltime / usert1[0].matches))) /
+          7000
+      )
 
       PASS = Math.round(doSomethingWithInput(PASS))
       DEFPASS = Math.round(doSomethingWithInput(PASS))
@@ -743,10 +729,12 @@ function Card() {
       PRE = Math.round(doSomethingWithInput(PRE))
       SAVE = Math.round(doSomethingWithInput(SAVE))
       SAVEPERCENT = Math.round(doSomethingWithInput(SAVEPERCENT))
+      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      SACRIFICIO = Math.round(doSomethingWithInput(SACRIFICIO))
 
       const AFT1 = (FIN + PRE + ATTACKASISS) / 3
-      const ADT1 = (INTER + DEFPASS) / 2
-      //const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
+      const ADT1 = (INTER + DEFPASS + SACRIFICIO) / 3
+      // const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
       const CCT1 = (PASS + ASISS + POSS) / 3
       const CPT1 = (SAVE + SAVEPERCENT + CONCEDED) / 3
       const val_deft1 = (ADT1 * 2.3 + AFT1 / 2.5 + CCT1 / 2) / 3
@@ -943,7 +931,11 @@ function Card() {
         SAVES = 1
       }
       let CONCEDED = Math.abs((1 - usert1[0].goalsconceded / SAVES) * 130)
-      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      let SACRIFICIO = Math.abs(
+        (usert1[0].distancecovered *
+          (100 - usert1[0].possession / (totaltime / usert1[0].matches))) /
+          7000
+      )
 
       PASS = Math.round(doSomethingWithInput(PASS))
       DEFPASS = Math.round(doSomethingWithInput(PASS))
@@ -955,9 +947,11 @@ function Card() {
       PRE = Math.round(doSomethingWithInput(PRE))
       SAVE = Math.round(doSomethingWithInput(SAVE))
       SAVEPERCENT = Math.round(doSomethingWithInput(SAVEPERCENT))
+      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      SACRIFICIO = Math.round(doSomethingWithInput(SACRIFICIO))
 
       const AFT1 = (FIN + PRE + ATTACKASISS) / 3
-      const ADT1 = (INTER + DEFPASS) / 2
+      const ADT1 = (INTER + DEFPASS + SACRIFICIO) / 3
       //const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
       const CCT1 = (PASS + ASISS + POSS) / 3
       const CPT1 = (SAVE + SAVEPERCENT + CONCEDED) / 3
@@ -1053,6 +1047,11 @@ function Card() {
         CONCEDE = 1
       }
       let CONCEDED = Math.abs((1 - CONCEDE / SAVES) * 130)
+      let SACRIFICIO = Math.abs(
+        (usert1[0].distancecovered *
+          (100 - usert1[0].possession / (totaltime / usert1[0].matches))) /
+          7000
+      )
 
       PASS = Math.round(doSomethingWithInput(PASS))
       DEFPASS = Math.round(doSomethingWithInput(PASS))
@@ -1065,9 +1064,10 @@ function Card() {
       SAVE = Math.round(doSomethingWithInput(SAVE))
       SAVEPERCENT = Math.round(doSomethingWithInput(SAVEPERCENT))
       CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      SACRIFICIO = Math.round(doSomethingWithInput(SACRIFICIO))
 
       const AFT1 = (FIN + PRE + ATTACKASISS) / 3
-      const ADT1 = (INTER + DEFPASS) / 2
+      const ADT1 = (INTER + DEFPASS + SACRIFICIO) / 3
       //const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
       const CCT1 = (PASS + ASISS + POSS) / 3
       const CPT1 = (SAVE + SAVEPERCENT + CONCEDED) / 3
@@ -1161,21 +1161,27 @@ function Card() {
         CONCEDE = 1
       }
       let CONCEDED = Math.abs((1 - CONCEDE / SAVES) * 130)
-      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      let SACRIFICIO = Math.abs(
+        (usert1[0].distancecovered *
+          (100 - usert1[0].possession / (totaltime / usert1[0].matches))) /
+          7000
+      )
 
       PASS = Math.round(doSomethingWithInput(PASS))
       DEFPASS = Math.round(doSomethingWithInput(PASS))
       ASISS = Math.round(doSomethingWithInput(ASISS))
       INTER = Math.round(doSomethingWithInput(INTER))
-      POSS = Math.round(doSomethingWithInput(POSS * 0.97))
+      POSS = Math.round(doSomethingWithInput(POSS))
       ATTACKASISS = Math.round(doSomethingWithInput(ASISS))
       FIN = Math.round(doSomethingWithInput(FIN))
       PRE = Math.round(doSomethingWithInput(PRE))
       SAVE = Math.round(doSomethingWithInput(SAVE))
       SAVEPERCENT = Math.round(doSomethingWithInput(SAVEPERCENT))
+      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      SACRIFICIO = Math.round(doSomethingWithInput(SACRIFICIO))
 
       const AFT1 = (FIN + PRE + ATTACKASISS) / 3
-      const ADT1 = (INTER + DEFPASS) / 2
+      const ADT1 = (INTER + DEFPASS + SACRIFICIO) / 3
       //const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
       const CCT1 = (PASS + ASISS + POSS) / 3
       const CPT1 = (SAVE + SAVEPERCENT + CONCEDED) / 3
@@ -1269,21 +1275,27 @@ function Card() {
         CONCEDE = 1
       }
       let CONCEDED = Math.abs((1 - CONCEDE / SAVES) * 130)
-      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      let SACRIFICIO = Math.abs(
+        (usert1[0].distancecovered *
+          (100 - usert1[0].possession / (totaltime / usert1[0].matches))) /
+          7000
+      )
 
       PASS = Math.round(doSomethingWithInput(PASS))
       DEFPASS = Math.round(doSomethingWithInput(PASS))
       ASISS = Math.round(doSomethingWithInput(ASISS))
       INTER = Math.round(doSomethingWithInput(INTER))
-      POSS = Math.round(doSomethingWithInput(POSS * 0.97))
+      POSS = Math.round(doSomethingWithInput(POSS))
       ATTACKASISS = Math.round(doSomethingWithInput(ASISS))
       FIN = Math.round(doSomethingWithInput(FIN))
       PRE = Math.round(doSomethingWithInput(PRE))
       SAVE = Math.round(doSomethingWithInput(SAVE))
       SAVEPERCENT = Math.round(doSomethingWithInput(SAVEPERCENT))
+      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      SACRIFICIO = Math.round(doSomethingWithInput(SACRIFICIO))
 
       const AFT1 = (FIN + PRE + ATTACKASISS) / 3
-      const ADT1 = (INTER + DEFPASS) / 2
+      const ADT1 = (INTER + DEFPASS + SACRIFICIO) / 3
       //const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
       const CCT1 = (PASS + ASISS + POSS) / 3
       const CPT1 = (SAVE + SAVEPERCENT + CONCEDED) / 3
@@ -1378,6 +1390,11 @@ function Card() {
       }
       let CONCEDED = Math.abs((1 - CONCEDE / SAVES) * 130)
       CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      let SACRIFICIO = Math.abs(
+        (usert1[0].distancecovered *
+          (100 - usert1[0].possession / (totaltime / usert1[0].matches))) /
+          7000
+      )
 
       PASS = Math.round(doSomethingWithInput(PASS))
       DEFPASS = Math.round(doSomethingWithInput(PASS))
@@ -1389,9 +1406,11 @@ function Card() {
       PRE = Math.round(doSomethingWithInput(PRE))
       SAVE = Math.round(doSomethingWithInput(SAVE))
       SAVEPERCENT = Math.round(doSomethingWithInput(SAVEPERCENT))
+      CONCEDED = Math.round(doSomethingWithInput(CONCEDED))
+      SACRIFICIO = Math.round(doSomethingWithInput(SACRIFICIO))
 
       const AFT1 = (FIN + PRE + ATTACKASISS) / 3
-      const ADT1 = (INTER + DEFPASS) / 2
+      const ADT1 = (INTER + DEFPASS + SACRIFICIO) / 3
       //const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
       const CCT1 = (PASS + ASISS + POSS) / 3
       const CPT1 = (SAVE + SAVEPERCENT + CONCEDED) / 3
@@ -1478,10 +1497,12 @@ function Card() {
   }
   */
 
+  // el section 1 hace de momento que no se llene la pantalla con el banner superior
+
   return (
     <>
-      <div>
-        <div className="content-container">
+      <div className="content-container">
+        <section className="section1">
           <div
             className="fw-container bg-dark"
             style={{
@@ -1881,6 +1902,8 @@ function Card() {
               </div>
             </div>
           </div>
+        </section>
+        <section className="section2">
           <div className="main-stats-cards-container container-large flex flex-expand">
             <div className="player-main-column player-info-column">
               <div className="hexagon-positions-container">
@@ -1924,7 +1947,9 @@ function Card() {
                       <span className="pos">CF</span>
                       <span
                         className="stat ovr_12 stat_tier_3"
-                        style={{ backgroundColor: "rgba(250, 250, 250, 0.2)" }}
+                        style={{
+                          backgroundColor: "rgba(250, 250, 250, 0.2)",
+                        }}
                       >
                         {Math.trunc(val_del)}
                       </span>
@@ -1945,7 +1970,9 @@ function Card() {
                       <span className="pos">MCA</span>
                       <span
                         className="stat ovr_12 stat_tier_3"
-                        style={{ backgroundColor: "rgba(250, 250, 250, 0.2)" }}
+                        style={{
+                          backgroundColor: "rgba(250, 250, 250, 0.2)",
+                        }}
                       >
                         {Math.trunc(val_mca)}
                       </span>
@@ -1964,7 +1991,9 @@ function Card() {
                       <span className="pos">MCD</span>
                       <span
                         className="stat ovr_12 stat_tier_3"
-                        style={{ backgroundColor: "rgba(250, 250, 250, 0.2)" }}
+                        style={{
+                          backgroundColor: "rgba(250, 250, 250, 0.2)",
+                        }}
                       >
                         {Math.trunc(val_mcd)}
                       </span>
@@ -1985,7 +2014,9 @@ function Card() {
                       <span className="pos">CB</span>
                       <span
                         className="stat ovr_12 stat_tier_3"
-                        style={{ backgroundColor: "rgba(250, 250, 250, 0.2)" }}
+                        style={{
+                          backgroundColor: "rgba(250, 250, 250, 0.2)",
+                        }}
                       >
                         {Math.trunc(val_def)}
                       </span>
@@ -2006,7 +2037,9 @@ function Card() {
                       <span className="pos">GK</span>
                       <span
                         className="stat ovr_12 stat_tier_3"
-                        style={{ backgroundColor: "rgba(250, 250, 250, 0.2)" }}
+                        style={{
+                          backgroundColor: "rgba(250, 250, 250, 0.2)",
+                        }}
                       >
                         {Math.trunc(val_gk)}
                       </span>
@@ -2174,24 +2207,6 @@ function Card() {
                           </td>
                           <td>Asistidor</td>
                         </tr>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                sacrificio >= 90
-                                  ? "#02fec5"
-                                  : sacrificio >= 80 && sacrificio < 90
-                                  ? "#a8fe02"
-                                  : sacrificio >= 70 && sacrificio < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {sacrificio}
-                          </td>
-                          <td>Sacrificio</td>
-                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -2265,20 +2280,18 @@ function Card() {
                             className="stat_tier_3 stat"
                             style={{
                               backgroundColor:
-                                (tacklescompleted / tackles) * 100 >= 25
+                                sacrificio >= 90
                                   ? "#02fec5"
-                                  : (tacklescompleted / tackles) * 100 >= 20 &&
-                                    (tacklescompleted / tackles) * 100 < 25
+                                  : sacrificio >= 80 && sacrificio < 90
                                   ? "#a8fe02"
-                                  : (tacklescompleted / tackles) * 100 >= 15 &&
-                                    (tacklescompleted / tackles) * 100 < 20
+                                  : sacrificio >= 70 && sacrificio < 80
                                   ? "#fbb206"
                                   : "red",
                             }}
                           >
-                            {Math.trunc((tacklescompleted / tackles) * 100)}%
+                            {sacrificio}
                           </td>
-                          <td>Efectividad de Entradas</td>
+                          <td>Sacrificio</td>
                         </tr>
                         <tr>
                           <td
@@ -2515,13 +2528,15 @@ function Card() {
                     <div className="player-main-column">
                       <h3>Estilo de Juego</h3>
                       <ul className="player-index-list">
-                        <li></li>
+                        <li>Defensor Central</li>
+                        <li>Defensor Central</li>
                       </ul>
                     </div>
                     <div className="player-main-column">
                       <h3>Habilidades de Jugador</h3>
                       <ul className="player-index-list">
-                        <li></li>
+                        {getSkill(playerID) && <li>{getSkill(playerID)}</li>}
+                        {getSkill(playerID) && <li>{getSkill(playerID)}</li>}
                       </ul>
                     </div>
                   </div>
@@ -2529,10 +2544,7 @@ function Card() {
               </div>
             </div>
           </div>
-        </div>
-        <div className="">
-          <></>
-        </div>
+        </section>
       </div>
       <style jsx>{styles}</style>
       <style jsx global>
