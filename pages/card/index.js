@@ -8,8 +8,8 @@ import {
   getBanner,
   getSkill,
 } from "components/Util/Util"
-// import html2canvas from "html2canvas"
-// import { saveAs } from "file-saver"
+import html2canvas from "html2canvas"
+import { saveAs } from "file-saver"
 
 import RadarChart from "react-svg-radar-chart"
 // import "react-svg-radar-chart/build/css/index.css"
@@ -1487,7 +1487,7 @@ function Card() {
     fetchmaster()
   }, [tID])
 
-  /* const printPDF = () => {
+  const printPDF = () => {
     html2canvas(document.querySelector("#ThePlayerCard")).then(function (
       canvas9
     ) {
@@ -1495,27 +1495,21 @@ function Card() {
       window.saveAs(playerimage, `${tID}_${playerID}.png`)
     })
   }
-  */
-
-  // el section 1 hace de momento que no se llene la pantalla con el banner superior
 
   return (
     <>
       <div className="content-container">
-        <section className="section1">
+        <section>
           <div
             className="fw-container bg-dark"
             style={{
               backgroundImage: `url(/banners/${banner}.png)`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
             }}
           >
             <div className="container-large flex top-container">
               <div
                 id="ThePlayerCard"
-                className="player-card player-card-shadow player-card-large bg-image2"
+                className="thefigure player-card player-card-shadow player-card-large bg-image2"
                 style={{
                   backgroundImage:
                     ovr >= 90
@@ -1526,7 +1520,7 @@ function Card() {
                       ? `url(/bg/04.png)`
                       : `url(/bg/05.png)`,
                 }}
-                // onClick={printPDF}
+                onClick={printPDF}
               >
                 <div className="player-card-position">{pos}</div>
                 <div className="player-card-ovr">{ovr}</div>
@@ -1560,13 +1554,22 @@ function Card() {
                   <span>&nbsp;</span>
                   {name}
                 </h1>
+                <div>
+                  <a className="namelink">
+                    <span>{fullteam}</span>
+                  </a>
+                </div>
                 <h2 className="subtle-text">
-                  {name} IOSoccer {getSeason(tID)} Stats
+                  <span>
+                    {name} IOSoccer {getSeason(tID)} Stats
+                  </span>
                 </h2>
                 <p className="description subtle-text">
-                  {name} es un futbolista con una media de {ovr} en la posicion
-                  de {pos}. {name} es un jugador perteneciente al equipo{" "}
-                  {fullteam} de IOSoccer.
+                  <span>
+                    {name} es un futbolista con una media de {ovr} en la
+                    posicion de {pos}. {name} es un jugador perteneciente al
+                    equipo {fullteam} de IOSoccer.
+                  </span>
                 </p>
                 <div>
                   <ul className="versions-list">
@@ -1903,648 +1906,629 @@ function Card() {
             </div>
           </div>
         </section>
-        <section className="section2">
-          <div className="main-stats-cards-container container-large flex flex-expand">
-            <div className="player-main-column player-info-column">
-              <div className="hexagon-positions-container">
-                <div className="hexagon-container">
-                  <RadarChart
-                    captions={{
-                      // columns
-                      battery: "AP",
-                      design: "AD",
-                      poderio: "CP",
-                      useful: "CC",
-                    }}
-                    data={[
-                      // data
-                      {
-                        data: {
-                          battery: AF / 100,
-                          design: AD / 100,
-                          useful: CC / 100,
-                          poderio: CP / 100,
-                        },
-                        meta: { color: "#58FCEC" },
+        <div
+          className="main-stats-cards-container container-large flex flex-expand"
+          style={{ height: "auto !important" }}
+        >
+          <div
+            className="player-main-column player-info-column"
+            style={{ flexGrow: 1 }}
+          >
+            <div className="hexagon-positions-container">
+              <div className="hexagon-container">
+                <RadarChart
+                  captions={{
+                    // columns
+                    battery: "AP",
+                    design: "AD",
+                    poderio: "CP",
+                    useful: "CC",
+                  }}
+                  data={[
+                    // data
+                    {
+                      data: {
+                        battery: AF / 100,
+                        design: AD / 100,
+                        useful: CC / 100,
+                        poderio: CP / 100,
                       },
-                    ]}
-                    size={200}
-                  />
+                      meta: { color: "#58FCEC" },
+                    },
+                  ]}
+                  size={200}
+                />
+              </div>
+              <div className="player-positions-new">
+                <div className="player-positions-row">
+                  <div
+                    className="player-positions-item fw-2"
+                    style={{
+                      backgroundColor:
+                        val_del >= 85
+                          ? "#ef1e1e"
+                          : val_del >= 75 && val_del < 85
+                          ? "#f09090"
+                          : "white",
+                      border:
+                        Math.trunc(val_del) == ovr ? "2px solid #000" : null,
+                    }}
+                  >
+                    <span className="pos">CF</span>
+                    <span
+                      className="stat ovr_12 stat_tier_3"
+                      style={{
+                        backgroundColor: "rgba(250, 250, 250, 0.2)",
+                      }}
+                    >
+                      {Math.trunc(val_del)}
+                    </span>
+                  </div>
                 </div>
-                <div className="player-positions-new">
-                  <div className="player-positions-row">
-                    <div
-                      className="player-positions-item fw-2"
+                <div className="player-positions-row">
+                  <div
+                    className="player-positions-item"
+                    style={{
+                      backgroundColor:
+                        val_mca >= 85
+                          ? "#88c900"
+                          : val_mca >= 75 && val_mca < 85
+                          ? "#b6c98d"
+                          : "white",
+                      border:
+                        Math.trunc(val_mca) == ovr ? "2px solid #000" : null,
+                    }}
+                  >
+                    <span className="pos">MCA</span>
+                    <span
+                      className="stat ovr_12 stat_tier_3"
                       style={{
-                        backgroundColor:
-                          val_del >= 85
-                            ? "#ef1e1e"
-                            : val_del >= 75 && val_del < 85
-                            ? "#f09090"
-                            : "white",
+                        backgroundColor: "rgba(250, 250, 250, 0.2)",
                       }}
                     >
-                      <span className="pos">CF</span>
-                      <span
-                        className="stat ovr_12 stat_tier_3"
-                        style={{
-                          backgroundColor: "rgba(250, 250, 250, 0.2)",
-                        }}
-                      >
-                        {Math.trunc(val_del)}
-                      </span>
-                    </div>
+                      {Math.trunc(val_mca)}
+                    </span>
                   </div>
-                  <div className="player-positions-row">
-                    <div
-                      className="player-positions-item"
+                  <div
+                    className="player-positions-item"
+                    style={{
+                      backgroundColor:
+                        val_mcd >= 85
+                          ? "#88c900"
+                          : val_mcd >= 75 && val_mcd < 85
+                          ? "#b6c98d"
+                          : "white",
+                      border:
+                        Math.trunc(val_mcd) == ovr ? "2px solid #000" : null,
+                    }}
+                  >
+                    <span className="pos">MCD</span>
+                    <span
+                      className="stat ovr_12 stat_tier_3"
                       style={{
-                        backgroundColor:
-                          val_mca >= 85
-                            ? "#88c900"
-                            : val_mca >= 75 && val_mca < 85
-                            ? "#b6c98d"
-                            : "white",
+                        backgroundColor: "rgba(250, 250, 250, 0.2)",
                       }}
                     >
-                      <span className="pos">MCA</span>
-                      <span
-                        className="stat ovr_12 stat_tier_3"
-                        style={{
-                          backgroundColor: "rgba(250, 250, 250, 0.2)",
-                        }}
-                      >
-                        {Math.trunc(val_mca)}
-                      </span>
-                    </div>
-                    <div
-                      className="player-positions-item"
-                      style={{
-                        backgroundColor:
-                          val_mcd >= 85
-                            ? "#88c900"
-                            : val_mcd >= 75 && val_mcd < 85
-                            ? "#b6c98d"
-                            : "white",
-                      }}
-                    >
-                      <span className="pos">MCD</span>
-                      <span
-                        className="stat ovr_12 stat_tier_3"
-                        style={{
-                          backgroundColor: "rgba(250, 250, 250, 0.2)",
-                        }}
-                      >
-                        {Math.trunc(val_mcd)}
-                      </span>
-                    </div>
+                      {Math.trunc(val_mcd)}
+                    </span>
                   </div>
-                  <div className="player-positions-row">
-                    <div
-                      className="player-positions-item fw-2"
+                </div>
+                <div className="player-positions-row">
+                  <div
+                    className="player-positions-item fw-2"
+                    style={{
+                      backgroundColor:
+                        val_def >= 85
+                          ? "#00abd2"
+                          : val_def >= 75 && val_def < 85
+                          ? "#92c6d1"
+                          : "white",
+                      border:
+                        Math.trunc(val_def) == ovr ? "2px solid #000" : null,
+                    }}
+                  >
+                    <span className="pos">CB</span>
+                    <span
+                      className="stat ovr_12 stat_tier_3"
                       style={{
-                        backgroundColor:
-                          val_def >= 85
-                            ? "#00abd2"
-                            : val_def >= 75 && val_def < 85
-                            ? "#92c6d1"
-                            : "white",
+                        backgroundColor: "rgba(250, 250, 250, 0.2)",
                       }}
                     >
-                      <span className="pos">CB</span>
-                      <span
-                        className="stat ovr_12 stat_tier_3"
-                        style={{
-                          backgroundColor: "rgba(250, 250, 250, 0.2)",
-                        }}
-                      >
-                        {Math.trunc(val_def)}
-                      </span>
-                    </div>
+                      {Math.trunc(val_def)}
+                    </span>
                   </div>
-                  <div className="player-positions-row">
-                    <div
-                      className="player-positions-item fw-2"
+                </div>
+                <div className="player-positions-row">
+                  <div
+                    className="player-positions-item fw-2"
+                    style={{
+                      backgroundColor:
+                        val_gk >= 85
+                          ? "#feb907"
+                          : val_gk >= 75 && val_gk < 85
+                          ? "#fed97b"
+                          : "white",
+                      border:
+                        Math.trunc(val_gk) == ovr ? "2px solid #000" : null,
+                    }}
+                  >
+                    <span className="pos">GK</span>
+                    <span
+                      className="stat ovr_12 stat_tier_3"
                       style={{
-                        backgroundColor:
-                          val_gk >= 85
-                            ? "#feb907"
-                            : val_gk >= 75 && val_gk < 85
-                            ? "#fed97b"
-                            : "white",
+                        backgroundColor: "rgba(250, 250, 250, 0.2)",
                       }}
                     >
-                      <span className="pos">GK</span>
-                      <span
-                        className="stat ovr_12 stat_tier_3"
-                        style={{
-                          backgroundColor: "rgba(250, 250, 250, 0.2)",
-                        }}
-                      >
-                        {Math.trunc(val_gk)}
-                      </span>
-                    </div>
+                      {Math.trunc(val_gk)}
+                    </span>
                   </div>
                 </div>
               </div>
-              <table className="player-info">
-                <tbody>
-                  <tr>
-                    <td>Nombre</td>
-                    <td>{name}</td>
-                  </tr>
-                  <tr>
-                    <td>SteamID</td>
-                    <td>{id}</td>
-                  </tr>
-                  <tr>
-                    <td>Equipo</td>
-                    <td>{fullteam}</td>
-                  </tr>
-                  <tr>
-                    <td>Partidos</td>
-                    <td>{matches}</td>
-                  </tr>
-                  <tr>
-                    <td>Partidos Reales</td>
-                    <td>{Math.round(totaltime)}</td>
-                  </tr>
-                  <tr>
-                    <td>Posicion</td>
-                    <td>{pos / matchesratio}</td>
-                  </tr>
-                  <tr>
-                    <td>Goles</td>
-                    <td>{goals}</td>
-                  </tr>
-                  <tr>
-                    <td>Asistencias</td>
-                    <td>{assists}</td>
-                  </tr>
-                  <tr>
-                    <td>Pases</td>
-                    <td>{passes}</td>
-                  </tr>
-                  <tr>
-                    <td>Intercepciones</td>
-                    <td>{interceptions}</td>
-                  </tr>
-                  <tr>
-                    <td>Atajadas</td>
-                    <td>{saves}</td>
-                  </tr>
-                  <tr>
-                    <td>Posesion</td>
-                    <td>{Math.round(possession)}%</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
-            <div className="flex flex-column" style={{ flexGrow: 2 }}>
-              <div className="stats-container">
-                <h3>Habilidad</h3>
-                <div className="flex flex-wrap stats-block-container">
-                  <div className="stats-block">
-                    <h4>
-                      <span
-                        className="stat_tier_2 stat"
-                        style={{
-                          backgroundColor:
-                            AF >= 90
-                              ? "#02fec5"
-                              : AF >= 80 && AF < 90
-                              ? "#a8fe02"
-                              : AF >= 70 && AF < 80
-                              ? "#fbb206"
-                              : "red",
-                        }}
-                      >
-                        {Math.round(AF)}
-                      </span>
-                      Poder Ofensivo
-                    </h4>
-                    <div
-                      className="star-bar"
+            <table
+              className="player-info"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                valign: "middle",
+                verticalAlign: "middle",
+              }}
+            >
+              <tbody>
+                <tr>
+                  <td>Nombre</td>
+                  <td>{name}</td>
+                </tr>
+                <tr>
+                  <td>SteamID</td>
+                  <td>{id}</td>
+                </tr>
+                <tr>
+                  <td>Equipo</td>
+                  <td>{fullteam}</td>
+                </tr>
+                <tr>
+                  <td>Partidos</td>
+                  <td>{matches}</td>
+                </tr>
+                <tr>
+                  <td>Partidos Reales</td>
+                  <td>{Math.round(totaltime)}</td>
+                </tr>
+                <tr>
+                  <td>Posicion</td>
+                  <td>{pos}</td>
+                </tr>
+                <tr>
+                  <td>Goles</td>
+                  <td>{goals}</td>
+                </tr>
+                <tr>
+                  <td>Asistencias</td>
+                  <td>{assists}</td>
+                </tr>
+                <tr>
+                  <td>Pases</td>
+                  <td>{passes}</td>
+                </tr>
+                <tr>
+                  <td>Intercepciones</td>
+                  <td>{interceptions}</td>
+                </tr>
+                <tr>
+                  <td>Atajadas</td>
+                  <td>{saves}</td>
+                </tr>
+                <tr>
+                  <td>Posesion</td>
+                  <td>{Math.round(possession)}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="flex flex-column" style={{ flexGrow: 2 }}>
+            <div className="stats-container">
+              <h3>Habilidad</h3>
+              <div className="flex flex-wrap stats-block-container">
+                <div className="stats-block">
+                  <h4>
+                    <span
+                      className="stat_tier_2 stat"
                       style={{
-                        background: "#e6e6e6",
-                        height: "8px",
-                        position: "relative",
-                        borderRadius: "5px",
-                        marginBottom: "15px",
-                        width: "400px",
+                        backgroundColor:
+                          AF >= 90
+                            ? "#02fec5"
+                            : AF >= 80 && AF < 90
+                            ? "#a8fe02"
+                            : AF >= 70 && AF < 80
+                            ? "#fbb206"
+                            : "red",
                       }}
                     >
-                      <div
-                        className="stat_tier_2 stat-bar-div"
-                        style={{
-                          backgroundColor:
-                            AF >= 90
-                              ? "#02fec5"
-                              : AF >= 80 && AF < 90
-                              ? "#a8fe02"
-                              : AF >= 70 && AF < 80
-                              ? "#fbb206"
-                              : "red",
-                          width: `${AF}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <table className="player-stats-modern">
-                      <tbody>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                finavg >= 90
-                                  ? "#02fec5"
-                                  : finavg >= 80 && finavg < 90
-                                  ? "#a8fe02"
-                                  : finavg >= 70 && finavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {finavg}
-                          </td>
-                          <td>Finalizacion</td>
-                        </tr>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                preavg >= 80
-                                  ? "#02fec5"
-                                  : preavg >= 60 && preavg < 80
-                                  ? "#a8fe02"
-                                  : preavg >= 40 && preavg < 60
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {preavg}
-                          </td>
-                          <td>Precision</td>
-                        </tr>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                attackassistavg >= 90
-                                  ? "#02fec5"
-                                  : attackassistavg >= 80 &&
-                                    attackassistavg < 90
-                                  ? "#a8fe02"
-                                  : attackassistavg >= 70 &&
-                                    attackassistavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {attackassistavg}
-                          </td>
-                          <td>Asistidor</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="stats-block">
-                    <h4>
-                      <span
-                        className="stat_tier_2 stat"
-                        style={{
-                          backgroundColor:
-                            AD >= 90
-                              ? "#02fec5"
-                              : AD >= 80 && AD < 90
-                              ? "#a8fe02"
-                              : AD >= 70 && AD < 80
-                              ? "#fbb206"
-                              : "red",
-                        }}
-                      >
-                        {Math.trunc(AD)}
-                      </span>
-                      Aptitud Defensiva
-                    </h4>
+                      {Math.round(AF)}
+                    </span>
+                    Poder Ofensivo
+                  </h4>
+                  <div className="stat-bar">
                     <div
-                      className="star-bar"
+                      className="stat_tier_2 stat-bar-div"
                       style={{
-                        background: "#e6e6e6",
-                        height: "8px",
-                        position: "relative",
-                        borderRadius: "5px",
-                        marginBottom: "15px",
-                        width: "400px",
+                        backgroundColor:
+                          AF >= 90
+                            ? "#02fec5"
+                            : AF >= 80 && AF < 90
+                            ? "#a8fe02"
+                            : AF >= 70 && AF < 80
+                            ? "#fbb206"
+                            : "red",
+                        width: `${AF}%`,
+                      }}
+                    ></div>
+                  </div>
+                  <table className="player-stats-modern">
+                    <tbody>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              finavg >= 90
+                                ? "#02fec5"
+                                : finavg >= 80 && finavg < 90
+                                ? "#a8fe02"
+                                : finavg >= 70 && finavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {finavg}
+                        </td>
+                        <td>Finalizacion</td>
+                      </tr>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              preavg >= 80
+                                ? "#02fec5"
+                                : preavg >= 60 && preavg < 80
+                                ? "#a8fe02"
+                                : preavg >= 40 && preavg < 60
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {preavg}
+                        </td>
+                        <td>Precision</td>
+                      </tr>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              attackassistavg >= 90
+                                ? "#02fec5"
+                                : attackassistavg >= 80 && attackassistavg < 90
+                                ? "#a8fe02"
+                                : attackassistavg >= 70 && attackassistavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {attackassistavg}
+                        </td>
+                        <td>Asistidor</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="stats-block">
+                  <h4>
+                    <span
+                      className="stat_tier_2 stat"
+                      style={{
+                        backgroundColor:
+                          AD >= 90
+                            ? "#02fec5"
+                            : AD >= 80 && AD < 90
+                            ? "#a8fe02"
+                            : AD >= 70 && AD < 80
+                            ? "#fbb206"
+                            : "red",
                       }}
                     >
-                      <div
-                        className="stat_tier_2 stat-bar-div"
-                        style={{
-                          backgroundColor:
-                            AD >= 90
-                              ? "#02fec5"
-                              : AD >= 80 && AF < 90
-                              ? "#a8fe02"
-                              : AD >= 70 && AD < 80
-                              ? "#fbb206"
-                              : "red",
-                          width: `${AD}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <table className="player-stats-modern">
-                      <tbody>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                interavg >= 90
-                                  ? "#02fec5"
-                                  : interavg >= 80 && interavg < 90
-                                  ? "#a8fe02"
-                                  : interavg >= 70 && interavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {interavg}
-                          </td>
-                          <td>Recuperacion de Pelota</td>
-                        </tr>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                sacrificio >= 90
-                                  ? "#02fec5"
-                                  : sacrificio >= 80 && sacrificio < 90
-                                  ? "#a8fe02"
-                                  : sacrificio >= 70 && sacrificio < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {sacrificio}
-                          </td>
-                          <td>Sacrificio</td>
-                        </tr>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                defensepassavg >= 90
-                                  ? "#02fec5"
-                                  : defensepassavg >= 80 && defensepassavg < 90
-                                  ? "#a8fe02"
-                                  : defensepassavg >= 70 && defensepassavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {defensepassavg}
-                          </td>
-                          <td>Pasador</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="stats-block">
-                    <h4>
-                      <span
-                        className="stat_tier_2 stat"
-                        style={{
-                          backgroundColor:
-                            CC >= 90
-                              ? "#02fec5"
-                              : CC >= 80 && CC < 90
-                              ? "#a8fe02"
-                              : CC >= 70 && CC < 80
-                              ? "#fbb206"
-                              : "red",
-                        }}
-                      >
-                        {Math.round(CC)}
-                      </span>
-                      Capacidad Creativa
-                    </h4>
+                      {Math.trunc(AD)}
+                    </span>
+                    Aptitud Defensiva
+                  </h4>
+                  <div className="stat-bar">
                     <div
-                      className="star-bar"
+                      className="stat_tier_2 stat-bar-div"
                       style={{
-                        background: "#e6e6e6",
-                        height: "8px",
-                        position: "relative",
-                        borderRadius: "5px",
-                        marginBottom: "15px",
-                        width: "400px",
+                        backgroundColor:
+                          AD >= 90
+                            ? "#02fec5"
+                            : AD >= 80 && AF < 90
+                            ? "#a8fe02"
+                            : AD >= 70 && AD < 80
+                            ? "#fbb206"
+                            : "red",
+                        width: `${AD}%`,
+                      }}
+                    ></div>
+                  </div>
+                  <table className="player-stats-modern">
+                    <tbody>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              interavg >= 90
+                                ? "#02fec5"
+                                : interavg >= 80 && interavg < 90
+                                ? "#a8fe02"
+                                : interavg >= 70 && interavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {interavg}
+                        </td>
+                        <td>Recuperacion de Pelota</td>
+                      </tr>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              sacrificio >= 90
+                                ? "#02fec5"
+                                : sacrificio >= 80 && sacrificio < 90
+                                ? "#a8fe02"
+                                : sacrificio >= 70 && sacrificio < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {sacrificio}
+                        </td>
+                        <td>Sacrificio</td>
+                      </tr>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              defensepassavg >= 90
+                                ? "#02fec5"
+                                : defensepassavg >= 80 && defensepassavg < 90
+                                ? "#a8fe02"
+                                : defensepassavg >= 70 && defensepassavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {defensepassavg}
+                        </td>
+                        <td>Pasador</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="stats-block">
+                  <h4>
+                    <span
+                      className="stat_tier_2 stat"
+                      style={{
+                        backgroundColor:
+                          CC >= 90
+                            ? "#02fec5"
+                            : CC >= 80 && CC < 90
+                            ? "#a8fe02"
+                            : CC >= 70 && CC < 80
+                            ? "#fbb206"
+                            : "red",
                       }}
                     >
-                      <div
-                        className="stat_tier_2 stat-bar-div"
-                        style={{
-                          backgroundColor:
-                            CC >= 90
-                              ? "#02fec5"
-                              : CC >= 80 && CC < 90
-                              ? "#a8fe02"
-                              : CC >= 70 && CC < 80
-                              ? "#fbb206"
-                              : "red",
-                          width: `${CC}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <table className="player-stats-modern">
-                      <tbody>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                passavg >= 90
-                                  ? "#02fec5"
-                                  : passavg >= 80 && passavg < 90
-                                  ? "#a8fe02"
-                                  : passavg >= 70 && passavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {passavg}
-                          </td>
-                          <td>Pasador</td>
-                        </tr>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                assistavg >= 90
-                                  ? "#02fec5"
-                                  : assistavg >= 80 && assistavg < 90
-                                  ? "#a8fe02"
-                                  : assistavg >= 70 && assistavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {assistavg}
-                          </td>
-                          <td>Asistidor</td>
-                        </tr>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                posavg >= 90
-                                  ? "#02fec5"
-                                  : posavg >= 80 && posavg < 90
-                                  ? "#a8fe02"
-                                  : posavg >= 70 && posavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {posavg}
-                          </td>
-                          <td>Posesion</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="stats-block">
-                    <h4>
-                      <span
-                        className="stat_tier_2 stat"
-                        style={{
-                          backgroundColor:
-                            CP >= 90
-                              ? "#02fec5"
-                              : CP >= 80 && CP < 90
-                              ? "#a8fe02"
-                              : CP >= 70 && CP < 80
-                              ? "#fbb206"
-                              : "red",
-                        }}
-                      >
-                        {Math.trunc(CP)}
-                      </span>
-                      Capacidad Portero
-                    </h4>
+                      {Math.round(CC)}
+                    </span>
+                    Capacidad Creativa
+                  </h4>
+                  <div className="stat-bar">
                     <div
-                      className="star-bar"
+                      className="stat_tier_2 stat-bar-div"
                       style={{
-                        background: "#e6e6e6",
-                        height: "8px",
-                        position: "relative",
-                        borderRadius: "5px",
-                        marginBottom: "15px",
-                        width: "400px",
+                        backgroundColor:
+                          CC >= 90
+                            ? "#02fec5"
+                            : CC >= 80 && CC < 90
+                            ? "#a8fe02"
+                            : CC >= 70 && CC < 80
+                            ? "#fbb206"
+                            : "red",
+                        width: `${CC}%`,
+                      }}
+                    ></div>
+                  </div>
+                  <table className="player-stats-modern">
+                    <tbody>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              passavg >= 90
+                                ? "#02fec5"
+                                : passavg >= 80 && passavg < 90
+                                ? "#a8fe02"
+                                : passavg >= 70 && passavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {passavg}
+                        </td>
+                        <td>Pasador</td>
+                      </tr>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              assistavg >= 90
+                                ? "#02fec5"
+                                : assistavg >= 80 && assistavg < 90
+                                ? "#a8fe02"
+                                : assistavg >= 70 && assistavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {assistavg}
+                        </td>
+                        <td>Asistidor</td>
+                      </tr>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              posavg >= 90
+                                ? "#02fec5"
+                                : posavg >= 80 && posavg < 90
+                                ? "#a8fe02"
+                                : posavg >= 70 && posavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {posavg}
+                        </td>
+                        <td>Posesion</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="stats-block">
+                  <h4>
+                    <span
+                      className="stat_tier_2 stat"
+                      style={{
+                        backgroundColor:
+                          CP >= 90
+                            ? "#02fec5"
+                            : CP >= 80 && CP < 90
+                            ? "#a8fe02"
+                            : CP >= 70 && CP < 80
+                            ? "#fbb206"
+                            : "red",
                       }}
                     >
-                      <div
-                        className="stat_tier_2 stat-bar-div"
-                        style={{
-                          backgroundColor:
-                            CP >= 90
-                              ? "#02fec5"
-                              : CP >= 80 && CP < 90
-                              ? "#a8fe02"
-                              : CP >= 70 && CP < 80
-                              ? "#fbb206"
-                              : "red",
-                          width: `${Math.trunc(CP)}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <table className="player-stats-modern">
-                      <tbody>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                savesavg >= 90
-                                  ? "#02fec5"
-                                  : savesavg >= 80 && savesavg < 90
-                                  ? "#a8fe02"
-                                  : savesavg >= 70 && savesavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {savesavg}
-                          </td>
-                          <td>Atrapada</td>
-                        </tr>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                savespercentavg >= 90
-                                  ? "#02fec5"
-                                  : savespercentavg >= 80 &&
-                                    savespercentavg < 90
-                                  ? "#a8fe02"
-                                  : savespercentavg >= 70 &&
-                                    savespercentavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {savespercentavg}
-                          </td>
-                          <td>Efectividad de atrapada</td>
-                        </tr>
-                        <tr>
-                          <td
-                            className="stat_tier_3 stat"
-                            style={{
-                              backgroundColor:
-                                concededavg >= 90
-                                  ? "#02fec5"
-                                  : concededavg >= 80 && concededavg < 90
-                                  ? "#a8fe02"
-                                  : concededavg >= 70 && concededavg < 80
-                                  ? "#fbb206"
-                                  : "red",
-                            }}
-                          >
-                            {concededavg}
-                          </td>
-                          <td>Seguridad</td>
-                        </tr>
-                      </tbody>
-                    </table>
+                      {Math.trunc(CP)}
+                    </span>
+                    Capacidad Portero
+                  </h4>
+                  <div className="stat-bar">
+                    <div
+                      className="stat_tier_2 stat-bar-div"
+                      style={{
+                        backgroundColor:
+                          CP >= 90
+                            ? "#02fec5"
+                            : CP >= 80 && CP < 90
+                            ? "#a8fe02"
+                            : CP >= 70 && CP < 80
+                            ? "#fbb206"
+                            : "red",
+                        width: `${Math.trunc(CP)}%`,
+                      }}
+                    ></div>
                   </div>
-                  <div className="cards-container flex flex-expand">
-                    <div className="player-main-column">
-                      <h3>Estilo de Juego</h3>
-                      <ul className="player-index-list">
-                        <li>Defensor Central</li>
-                        <li>Defensor Central</li>
-                      </ul>
-                    </div>
-                    <div className="player-main-column">
-                      <h3>Habilidades de Jugador</h3>
-                      <ul className="player-index-list">
-                        {getSkill(playerID) && <li>{getSkill(playerID)}</li>}
-                        {getSkill(playerID) && <li>{getSkill(playerID)}</li>}
-                      </ul>
-                    </div>
-                  </div>
+                  <table className="player-stats-modern">
+                    <tbody>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              savesavg >= 90
+                                ? "#02fec5"
+                                : savesavg >= 80 && savesavg < 90
+                                ? "#a8fe02"
+                                : savesavg >= 70 && savesavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {savesavg}
+                        </td>
+                        <td>Atrapada</td>
+                      </tr>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              savespercentavg >= 90
+                                ? "#02fec5"
+                                : savespercentavg >= 80 && savespercentavg < 90
+                                ? "#a8fe02"
+                                : savespercentavg >= 70 && savespercentavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {savespercentavg}
+                        </td>
+                        <td>Efectividad de atrapada</td>
+                      </tr>
+                      <tr>
+                        <td
+                          className="stat_tier_3 stat"
+                          style={{
+                            backgroundColor:
+                              concededavg >= 90
+                                ? "#02fec5"
+                                : concededavg >= 80 && concededavg < 90
+                                ? "#a8fe02"
+                                : concededavg >= 70 && concededavg < 80
+                                ? "#fbb206"
+                                : "red",
+                          }}
+                        >
+                          {concededavg}
+                        </td>
+                        <td>Seguridad</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="cards-container flex flex-expand">
+                <div className="player-main-column">
+                  <h3>Estilo de Juego</h3>
+                  <ul className="player-index-list">
+                    <li>Defensor Central</li>
+                    <li>Defensor Central</li>
+                  </ul>
+                </div>
+                <div className="player-main-column">
+                  <h3>Habilidades de Jugador</h3>
+                  <ul className="player-index-list">
+                    <li>Defensor Central</li>
+                    <li>Defensor Central</li>
+                    {getSkill(playerID) && <li>{getSkill(playerID)}</li>}
+                    {getSkill(playerID) && <li>{getSkill(playerID)}</li>}
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
       <style jsx>{styles}</style>
       <style jsx global>

@@ -15,6 +15,12 @@
 # production
 /build
 
+# API
+/firebase/firebase-keys.json
+
+# Irrelevant Files
+/allavaz-backend
+
 # misc
 .DS_Store
 

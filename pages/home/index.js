@@ -1,4 +1,3 @@
-import AppLayout from "components/AppLayout"
 import { useEffect, useState } from "react"
 import Devit from "components/Devit"
 import useUser from "hooks/useUser"
@@ -6,6 +5,7 @@ import { fetchLatestDevits } from "firebase/client"
 
 import Create from "components/Icons/Create"
 import Search from "components/Icons/Search"
+import Users from "components/Icons/Users"
 
 import Link from "next/link"
 import Head from "next/head"
@@ -21,47 +21,45 @@ export default function HomePage() {
 
   return (
     <>
-      <AppLayout>
-        <Head>
-          <title>Inicio / IOS Manager</title>
-        </Head>
-        <header>
-          <h2>Inicio</h2>
-        </header>
-        <section>
-          {timeline.map(
-            ({ createdAt, id, userName, avatar, content, img, userId }) => (
-              <Devit
-                avatar={avatar}
-                createdAt={createdAt}
-                id={id}
-                key={id}
-                content={content}
-                userName={userName}
-                userId={userId}
-                img={img}
-              />
-            )
-          )}
-        </section>
-        <nav>
-          <Link href="/compose/tweet">
-            <a>
-              <Create width={32} height={32} stroke="#09f" />
-            </a>
-          </Link>
-          <Link href="/compose/tweet">
-            <a>
-              <Search width={32} height={32} stroke="#09f" />
-            </a>
-          </Link>
-          <Link href="/compose/tweet">
-            <a>
-              <Create width={32} height={32} stroke="#09f" />
-            </a>
-          </Link>
-        </nav>
-      </AppLayout>
+      <Head>
+        <title>Inicio / IOS Manager</title>
+      </Head>
+      <header>
+        <h2>Inicio</h2>
+      </header>
+      <section>
+        {timeline.map(
+          ({ createdAt, id, userName, avatar, content, img, userId }) => (
+            <Devit
+              avatar={avatar}
+              createdAt={createdAt}
+              id={id}
+              key={id}
+              content={content}
+              userName={userName}
+              userId={userId}
+              img={img}
+            />
+          )
+        )}
+      </section>
+      <nav>
+        <Link href="/compose/tweet">
+          <a>
+            <Create width={32} height={32} stroke="#09f" />
+          </a>
+        </Link>
+        <Link href="/compose/tweet">
+          <a>
+            <Search width={32} height={32} stroke="#09f" />
+          </a>
+        </Link>
+        <Link href="/card">
+          <a>
+            <Users width={32} height={32} stroke="#09f" />
+          </a>
+        </Link>
+      </nav>
       <style jsx>{`
         header {
           align-items: center;
