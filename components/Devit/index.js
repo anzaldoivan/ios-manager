@@ -18,7 +18,7 @@ export default function Devit({
 
   const handleArticleClick = (e) => {
     e.preventDefault()
-    router.push(`/status/${id}`)
+    router.push(`/status/[id]`, `/status/${id}`)
   }
 
   return (

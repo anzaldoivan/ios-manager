@@ -43,23 +43,6 @@ export default function HomePage() {
           )
         )}
       </section>
-      <nav>
-        <Link href="/compose/tweet">
-          <a>
-            <Create width={32} height={32} stroke="#09f" />
-          </a>
-        </Link>
-        <Link href="/compose/tweet">
-          <a>
-            <Search width={32} height={32} stroke="#09f" />
-          </a>
-        </Link>
-        <Link href="/card">
-          <a>
-            <Users width={32} height={32} stroke="#09f" />
-          </a>
-        </Link>
-      </nav>
       <style jsx>{`
         header {
           align-items: center;

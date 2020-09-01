@@ -37,14 +37,60 @@ export default css`
 
   main {
     background: #fff;
-    border-radius: 10px;
+    border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     width: 100%;
+  }
+
+  nav {
+    background: #fff;
+    bottom: 0;
+    border-top: 1px solid #eee;
+    display: flex;
+    height: 49px;
+    position: sticky;
+    width: 100%;
+  }
+
+  nav a {
+    align-items: center;
+    display: flex;
+    flex: 1 1 auto;
+    height: 100%;
+    justify-content: center;
+  }
+
+  nav a:hover {
+    background: radial-gradient(#0099ff22 15%, transparent 16%);
+    background-size: 180px 180px;
+    background-position: center;
+  }
+
+  nav a:hover > :global(svg) {
+    stroke: ${colors.primary};
+  }
+
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: #f5f5f5;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    background-color: #f5f5f5;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #555;
   }
 
   @media (min-width: ${breakpoints.mobile}) {
