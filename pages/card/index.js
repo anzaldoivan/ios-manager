@@ -7,6 +7,8 @@ import {
   getTeam,
   getBanner,
   getSkill,
+  getPosition,
+  getOverall,
 } from "components/Util/Util"
 import html2canvas from "html2canvas"
 import { saveAs } from "file-saver"
@@ -15,6 +17,7 @@ import RadarChart from "react-svg-radar-chart"
 // import "react-svg-radar-chart/build/css/index.css"
 
 import styles, { globalStyles } from "components/Card/styles"
+import TheCard from "components/Card"
 
 // importamos AXIOS que nos sirve hacer los fetch con las API
 
@@ -115,100 +118,17 @@ function Card() {
   const val_gk = CP
 
   // pendiende analizar si ovrT sigue teniendo un valor util, en todo caso borrarlo
-  let ovr
-  let pos
-  // if para determinar el total predominante entre las posiciones
-  if (val_def >= val_del) {
-    if (val_def >= val_mca) {
-      if (val_def >= val_mcd) {
-        ovr = Math.trunc(val_def)
-      } else {
-        ovr = Math.trunc(val_mcd)
-      }
-    } else {
-      if (val_mca >= val_mcd) {
-        ovr = Math.trunc(val_mca)
-      } else {
-        ovr = Math.trunc(val_mcd)
-      }
-    }
-  } else {
-    if (val_del >= val_mca) {
-      if (val_del >= val_mcd) {
-        ovr = Math.trunc(val_del)
-      } else {
-        ovr = Math.trunc(val_mcd)
-      }
-    } else {
-      if (val_mca >= val_mcd) {
-        ovr = Math.trunc(val_mca)
-      } else {
-        ovr = Math.trunc(val_mcd)
-      }
-    }
-  }
-  if (ovr < CP) {
-    ovr = Math.trunc(CP)
-  }
+  const ovr = getOverall(val_del, val_def, val_mca, val_mcd, CP)
+  const pos = getPosition(val_del, val_def, val_mca, val_mcd, CP)
 
-  // if para determinar la posicion mas valorada
-  if (val_def >= val_del) {
-    if (val_def >= val_mca) {
-      if (val_def >= val_mcd) {
-        if (val_def >= val_gk) {
-          pos = "CB"
-        } else {
-          pos = "GK"
-        }
-      } else {
-        if (val_mcd >= val_gk) {
-          pos = "MCD"
-        } else {
-          pos = "GK"
-        }
-      }
-    } else {
-      if (val_mca >= val_mcd) {
-        if (val_mca >= val_gk) {
-          pos = "MCA"
-        } else {
-          pos = "GK"
-        }
-      } else {
-        if (val_mcd >= val_gk) {
-          pos = "MCD"
-        } else {
-          pos = "GK"
-        }
-      }
-    }
-  } else {
-    if (val_del >= val_mca) {
-      if (val_del >= val_mcd) {
-        if (val_del >= val_gk) {
-          pos = "CF"
-        } else {
-          pos = "GK"
-        }
-      } else {
-        pos = "MCD"
-      }
-    } else {
-      if (val_mca >= val_mcd) {
-        if (val_gk >= val_mca) {
-          pos = "GK"
-        } else {
-          pos = "MCA"
-        }
-      } else {
-        if (val_mcd >= val_gk) {
-          pos = "MCD"
-        } else {
-          pos = "GK"
-        }
-      }
-    }
-  }
+  const [state, setState] = useState({
+    name: name,
+    id: id,
+    ovr: ovr,
+    pos: pos,
+    team: team,
+    banner: banner,
+  })
 
   const fetchUser = async () => {
     const apiCall = await fetch(
@@ -392,17 +312,9 @@ function Card() {
     )
     const FIN = Math.round((user[0].goals / actualtime) * 70)
     const PRE = Math.round((user[0].shotsontarget / user[0].shots) * 100)
-    const SAVEPERCENT = Math.round((user[0].savescaught / user[0].saves) * 110)
-    console.log(
-      "SAVE PERCENT VIEJO / SAVE NUEVO / SAVE MULTIPLICADO: " +
-        doSomethingWithInput(SAVEPERCENT) +
-        " / " +
-        SAVEPERCENT / actualtime +
-        " / " +
-        SAVEPERCENT
-    )
     const ATASISS = Math.round(doSomethingWithInput(ASISS))
     const SAVE = Math.round((user[0].saves / actualtime) * 11)
+    const SAVEPERCENT = Math.round((user[0].savescaught / user[0].saves) * 110)
     let SAVES = user[0].saves
     let CONCEDE = user[0].goalsconceded
     if (SAVES == 0) {
@@ -413,6 +325,7 @@ function Card() {
     }
     //const CONCEDED = Math.abs(((user[0].goalsconceded-user[0].saves)/SAVES*100)*1.5);
     const CONCEDED = Math.abs((1 - CONCEDE / SAVES) * 130)
+
     const SACRIFICIO = Math.abs(
       (user[0].distancecovered *
         (100 - user[0].possession / (actualtime / user[0].matches))) /
@@ -431,6 +344,46 @@ function Card() {
     setSavespercentavg(Math.round(doSomethingWithInput(SAVEPERCENT)))
     setConcededavg(Math.round(doSomethingWithInput(CONCEDED)))
     setSacrificio(Math.round(doSomethingWithInput(SACRIFICIO)))
+
+    const ATTACKASISS = Math.round(doSomethingWithInput(ASISS))
+
+    let PASS2 = Math.round(doSomethingWithInput(PASS))
+    let DEFPASS2 = Math.round(doSomethingWithInput(PASS))
+    let ASISS2 = Math.round(doSomethingWithInput(ASISS))
+    let INTER2 = Math.round(doSomethingWithInput(INTER))
+    let POSS2 = Math.round(doSomethingWithInput(POSS))
+    let ATTACKASISS2 = Math.round(doSomethingWithInput(ATTACKASISS))
+    let FIN2 = Math.round(doSomethingWithInput(FIN))
+    let PRE2 = Math.round(doSomethingWithInput(PRE))
+    let SAVE2 = Math.round(doSomethingWithInput(SAVE))
+    let SAVEPERCENT2 = Math.round(doSomethingWithInput(SAVEPERCENT))
+    let CONCEDED2 = Math.round(doSomethingWithInput(CONCEDED))
+    let SACRIFICIO2 = Math.round(doSomethingWithInput(SACRIFICIO))
+
+    const AFT1 = (FIN2 + PRE2 + ATTACKASISS2) / 3
+    const ADT1 = (INTER2 + DEFPASS2 + SACRIFICIO2) / 3
+    //const CCT1 = ((usert1[0].passescompleted+usert1[0].assists*10+usert1[0].possession*10)/totaltime)*2.05;
+    const CCT1 = (PASS2 + ASISS2 + POSS2) / 3
+    const CPT1 = (SAVE2 + SAVEPERCENT2 + CONCEDED2) / 3
+    const val_deft1 = (ADT1 * 2.3 + AFT1 / 2.5 + CCT1 / 2) / 3
+    const val_delt1 = (AFT1 * 2.3 + ADT1 / 2.5 + CCT1 / 2) / 3
+    const val_mcat1 = (CCT1 + AFT1) / 2
+    const val_mcdt1 = (CCT1 + ADT1) / 2
+    const val_gkt1 = CPT1
+    const ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
+    const pos = getPosition(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
+    console.log("OVERALL -> El AF: " + AFT1 + "/ AD / CC / CP ")
+
+    setState({
+      name: user[0].name,
+      id: steamid_to_64bit(playerID),
+      tID: tID,
+      playerID: playerID,
+      ovr: ovrt1,
+      pos: pos,
+      team: getTeam(user[0].team),
+      banner: getBanner(user[0].team),
+    })
 
     var theskill = players.players.map((player) => {
       if (player.skill1 && player.steam === playerID) {
@@ -514,40 +467,8 @@ function Card() {
       const val_mcat1 = (CCT1 + AFT1) / 2
       const val_mcdt1 = (CCT1 + ADT1) / 2
       const val_gkt1 = CPT1
-      let ovrt1
+      let ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
       let pos
-      if (val_deft1 >= val_delt1) {
-        if (val_deft1 >= val_mcat1) {
-          if (val_deft1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_deft1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      } else {
-        if (val_delt1 >= val_mcat1) {
-          if (val_delt1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_delt1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      }
-      if (ovrt1 < CPT1) {
-        ovrt1 = Math.trunc(CPT1)
-      }
       setT1(ovrt1)
       setT1team(getTeam(usert1[0].team))
       setT1real(true)
@@ -628,40 +549,8 @@ function Card() {
       const val_mcat1 = (CCT1 + AFT1) / 2
       const val_mcdt1 = (CCT1 + ADT1) / 2
       const val_gkt1 = CPT1
-      let ovrt1
+      let ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
       let pos
-      if (val_deft1 >= val_delt1) {
-        if (val_deft1 >= val_mcat1) {
-          if (val_deft1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_deft1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      } else {
-        if (val_delt1 >= val_mcat1) {
-          if (val_delt1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_delt1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      }
-      if (ovrt1 < CPT1) {
-        ovrt1 = Math.trunc(CPT1)
-      }
       setT2(ovrt1)
       setT2team(getTeam(usert1[0].team))
       setT2real(true)
@@ -742,40 +631,8 @@ function Card() {
       const val_mcat1 = (CCT1 + AFT1) / 2
       const val_mcdt1 = (CCT1 + ADT1) / 2
       const val_gkt1 = CPT1
-      let ovrt1
+      let ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
       let pos
-      if (val_deft1 >= val_delt1) {
-        if (val_deft1 >= val_mcat1) {
-          if (val_deft1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_deft1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      } else {
-        if (val_delt1 >= val_mcat1) {
-          if (val_delt1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_delt1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      }
-      if (ovrt1 < CPT1) {
-        ovrt1 = Math.trunc(CPT1)
-      }
       setT3(ovrt1)
       setT3team(getTeam(usert1[0].team))
       setT3real(true)
@@ -849,40 +706,8 @@ function Card() {
       const val_mcat1 = (CCT1 + AFT1) / 2
       const val_mcdt1 = (CCT1 + ADT1) / 2
       const val_gkt1 = CPT1
-      let ovrt1
+      let ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
       let pos
-      if (val_deft1 >= val_delt1) {
-        if (val_deft1 >= val_mcat1) {
-          if (val_deft1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_deft1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      } else {
-        if (val_delt1 >= val_mcat1) {
-          if (val_delt1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_delt1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      }
-      if (ovrt1 < CPT1) {
-        ovrt1 = Math.trunc(CPT1)
-      }
       setT4(ovrt1)
       setT4team(getTeam(usert1[0].team))
       setActualovr(ovrt1)
@@ -960,40 +785,8 @@ function Card() {
       const val_mcat1 = (CCT1 + AFT1) / 2
       const val_mcdt1 = (CCT1 + ADT1) / 2
       const val_gkt1 = CPT1
-      let ovrt1
+      let ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
       let pos
-      if (val_deft1 >= val_delt1) {
-        if (val_deft1 >= val_mcat1) {
-          if (val_deft1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_deft1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      } else {
-        if (val_delt1 >= val_mcat1) {
-          if (val_delt1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_delt1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      }
-      if (ovrt1 < CPT1) {
-        ovrt1 = Math.trunc(CPT1)
-      }
       setT5(ovrt1)
       setT5team(getTeam(usert1[0].team))
       setActualovr(ovrt1)
@@ -1076,40 +869,8 @@ function Card() {
       const val_mcat1 = (CCT1 + AFT1) / 2
       const val_mcdt1 = (CCT1 + ADT1) / 2
       const val_gkt1 = CPT1
-      let ovrt1
+      let ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
       let pos
-      if (val_deft1 >= val_delt1) {
-        if (val_deft1 >= val_mcat1) {
-          if (val_deft1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_deft1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      } else {
-        if (val_delt1 >= val_mcat1) {
-          if (val_delt1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_delt1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      }
-      if (ovrt1 < CPT1) {
-        ovrt1 = Math.trunc(CPT1)
-      }
       setT0(ovrt1)
       setT0team(getTeam(usert1[0].team))
       setT0real(true)
@@ -1190,40 +951,8 @@ function Card() {
       const val_mcat1 = (CCT1 + AFT1) / 2
       const val_mcdt1 = (CCT1 + ADT1) / 2
       const val_gkt1 = CPT1
-      let ovrt1
+      let ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
       let pos
-      if (val_deft1 >= val_delt1) {
-        if (val_deft1 >= val_mcat1) {
-          if (val_deft1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_deft1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      } else {
-        if (val_delt1 >= val_mcat1) {
-          if (val_delt1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_delt1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      }
-      if (ovrt1 < CPT1) {
-        ovrt1 = Math.trunc(CPT1)
-      }
       setT6(ovrt1)
       setT6team(getTeam(usert1[0].team))
       setT6real(true)
@@ -1304,40 +1033,8 @@ function Card() {
       const val_mcat1 = (CCT1 + AFT1) / 2
       const val_mcdt1 = (CCT1 + ADT1) / 2
       const val_gkt1 = CPT1
-      let ovrt1
+      let ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
       let pos
-      if (val_deft1 >= val_delt1) {
-        if (val_deft1 >= val_mcat1) {
-          if (val_deft1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_deft1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      } else {
-        if (val_delt1 >= val_mcat1) {
-          if (val_delt1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_delt1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      }
-      if (ovrt1 < CPT1) {
-        ovrt1 = Math.trunc(CPT1)
-      }
       setMaradei(ovrt1)
       setMaradeiteam(getTeam(usert1[0].team))
       setMaradeireal(true)
@@ -1419,40 +1116,8 @@ function Card() {
       const val_mcat1 = (CCT1 + AFT1) / 2
       const val_mcdt1 = (CCT1 + ADT1) / 2
       const val_gkt1 = CPT1
-      let ovrt1
+      let ovrt1 = getOverall(val_delt1, val_deft1, val_mcat1, val_mcdt1, CPT1)
       let pos
-      if (val_deft1 >= val_delt1) {
-        if (val_deft1 >= val_mcat1) {
-          if (val_deft1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_deft1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      } else {
-        if (val_delt1 >= val_mcat1) {
-          if (val_delt1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_delt1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        } else {
-          if (val_mcat1 >= val_mcdt1) {
-            ovrt1 = Math.trunc(val_mcat1)
-          } else {
-            ovrt1 = Math.trunc(val_mcdt1)
-          }
-        }
-      }
-      if (ovrt1 < CPT1) {
-        ovrt1 = Math.trunc(CPT1)
-      }
       setMaster(ovrt1)
       setMasterteam(getTeam(usert1[0].team))
       setMasterreal(true)
@@ -1507,33 +1172,7 @@ function Card() {
             }}
           >
             <div className="container-large flex top-container">
-              <div
-                id="ThePlayerCard"
-                className="thefigure player-card player-card-shadow player-card-large bg-image2"
-                style={{
-                  backgroundImage:
-                    ovr >= 90
-                      ? `url(/bg/0.png)`
-                      : ovr >= 80 && ovr < 90
-                      ? `url(/bg/03.png)`
-                      : ovr >= 70 && ovr < 80
-                      ? `url(/bg/04.png)`
-                      : `url(/bg/05.png)`,
-                }}
-                onClick={printPDF}
-              >
-                <div className="player-card-position">{pos}</div>
-                <div className="player-card-ovr">{ovr}</div>
-                <div className="player-card-name">{name}</div>
-                <img
-                  className="player-card-club-featured"
-                  src={"/clubs/" + `${team}` + ".png"}
-                ></img>
-                <img
-                  className="player-card-image-featured"
-                  src={"/cartas/" + `${id}` + ".png"}
-                ></img>
-              </div>
+              <TheCard {...state} />
               <div className="top-info">
                 <h1 className="top-header">
                   <span
@@ -2512,16 +2151,13 @@ function Card() {
                 <div className="player-main-column">
                   <h3>Estilo de Juego</h3>
                   <ul className="player-index-list">
-                    <li>Defensor Central</li>
-                    <li>Defensor Central</li>
+                    <li></li>
                   </ul>
                 </div>
                 <div className="player-main-column">
                   <h3>Habilidades de Jugador</h3>
                   <ul className="player-index-list">
-                    <li>Defensor Central</li>
-                    <li>Defensor Central</li>
-                    {getSkill(playerID) && <li>{getSkill(playerID)}</li>}
+                    <li></li>
                     {getSkill(playerID) && <li>{getSkill(playerID)}</li>}
                   </ul>
                 </div>

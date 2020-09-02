@@ -224,6 +224,8 @@ export const getBanner = (bannerteam) => {
     ? (thebanner = "acm")
     : thebanner == "coldchester fc"
     ? (thebanner = "ccfc")
+    : thebanner == "colchester united fc"
+    ? (thebanner = "ccfc")
     : thebanner == "defensores del doctor"
     ? (thebanner = "cadd")
     : thebanner == "inter"
@@ -232,10 +234,14 @@ export const getBanner = (bannerteam) => {
     ? (thebanner = "gb")
     : thebanner == "layuve"
     ? (thebanner = "layuve")
+    : thebanner == "los magios"
+    ? (thebanner = "lmg")
     : thebanner == "meteors gaming"
     ? (thebanner = "mg")
     : thebanner == "merca doçura"
     ? (thebanner = "mds")
+    : thebanner == "musashi fc"
+    ? (thebanner = "mcfc")
     : thebanner == "peñarol"
     ? (thebanner = "peñarol")
     : thebanner == "velez sarsfield"
@@ -255,4 +261,103 @@ export const getSkill = (steamID) => {
   })
   var theskill2 = theskill.toString().split(",").join("")
   return theskill2
+}
+
+export const getPosition = (val_del, val_def, val_mca, val_mcd, CP) => {
+  let pos
+  if (val_def >= val_del) {
+    if (val_def >= val_mca) {
+      if (val_def >= val_mcd) {
+        if (val_def >= CP) {
+          pos = "CB"
+        } else {
+          pos = "GK"
+        }
+      } else {
+        if (val_mcd >= CP) {
+          pos = "MCD"
+        } else {
+          pos = "GK"
+        }
+      }
+    } else {
+      if (val_mca >= val_mcd) {
+        if (val_mca >= CP) {
+          pos = "MCA"
+        } else {
+          pos = "GK"
+        }
+      } else {
+        if (val_mcd >= CP) {
+          pos = "MCD"
+        } else {
+          pos = "GK"
+        }
+      }
+    }
+  } else {
+    if (val_del >= val_mca) {
+      if (val_del >= val_mcd) {
+        if (val_del >= CP) {
+          pos = "CF"
+        } else {
+          pos = "GK"
+        }
+      } else {
+        pos = "MCD"
+      }
+    } else {
+      if (val_mca >= val_mcd) {
+        if (CP >= val_mca) {
+          pos = "GK"
+        } else {
+          pos = "MCA"
+        }
+      } else {
+        if (val_mcd >= CP) {
+          pos = "MCD"
+        } else {
+          pos = "GK"
+        }
+      }
+    }
+  }
+  return pos
+}
+
+export const getOverall = (val_del, val_def, val_mca, val_mcd, CP) => {
+  let ovr
+  if (val_def >= val_del) {
+    if (val_def >= val_mca) {
+      if (val_def >= val_mcd) {
+        ovr = Math.round(val_def)
+      } else {
+        ovr = Math.round(val_mcd)
+      }
+    } else {
+      if (val_mca >= val_mcd) {
+        ovr = Math.round(val_mca)
+      } else {
+        ovr = Math.round(val_mcd)
+      }
+    }
+  } else {
+    if (val_del >= val_mca) {
+      if (val_del >= val_mcd) {
+        ovr = Math.round(val_del)
+      } else {
+        ovr = Math.round(val_mcd)
+      }
+    } else {
+      if (val_mca >= val_mcd) {
+        ovr = Math.round(val_mca)
+      } else {
+        ovr = Math.round(val_mcd)
+      }
+    }
+  }
+  if (ovr < CP) {
+    ovr = Math.round(CP)
+  }
+  return ovr
 }

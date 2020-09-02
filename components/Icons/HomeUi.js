@@ -8,6 +8,7 @@ function HomeUi(props) {
         fillRule="evenodd"
         stroke="#2a2e3b"
         strokeLinecap="round"
+        npm
         strokeLinejoin="round"
       >
         <path d="M18.5 14.5v-9a2 2 0 00-2-2h-12a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2z" />
