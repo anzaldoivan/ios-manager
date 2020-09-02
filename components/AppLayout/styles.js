@@ -54,6 +54,7 @@ export default css`
     border-top: 1px solid #eee;
     display: flex;
     height: 49px;
+    position: -webkit-sticky;
     position: sticky;
     width: 100%;
   }

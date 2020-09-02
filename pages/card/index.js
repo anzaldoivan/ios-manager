@@ -14,7 +14,7 @@ import { saveAs } from "file-saver"
 import RadarChart from "react-svg-radar-chart"
 // import "react-svg-radar-chart/build/css/index.css"
 
-import styles, { globalStyles } from "./styles"
+import styles, { globalStyles } from "components/Card/styles"
 
 // importamos AXIOS que nos sirve hacer los fetch con las API
 
